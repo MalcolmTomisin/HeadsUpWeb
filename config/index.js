@@ -1,3 +1,4 @@
+
 const staging = process.env.NODE_ENV == "staging" ? true : false;
 let dbName = staging
   ? process.env.DB_NAME_STAGING || "test"
@@ -10,8 +11,11 @@ module.exports = {
   api: {
     host: process.env.DB_HOST || "localhost",
     user: process.env.DB_USER || "root",
-    pass: process.env.DB_PASS || "Dexter54",
+    pass: process.env.DB_PASS || "Notheadsuppass2000",
     db: dbName,
     port: port,
+  },
+  jwt: {
+    secret: process.env.JWT_SECRET || "changethistoanenvvariablelateron",
   },
 };
