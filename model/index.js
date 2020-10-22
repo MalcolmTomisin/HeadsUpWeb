@@ -16,16 +16,11 @@ const UserModel = (instance, datatype) => {
       email: datatype.STRING,
       phone: datatype.STRING,
       password: datatype.STRING,
-      emailVerificationToken: datatype.STRING,
-      emailVerified: {
-        type: datatype.BOOLEAN,
-        defaultValue: false,
-      },
-      passwordRecoveryToken: datatype.INTEGER,
       isAdmin: {
         type: datatype.BOOLEAN,
         defaultValue: false,
       },
+      picture: datatype.STRING,
     }, {
         paranoid: true
     });
