@@ -15,6 +15,7 @@ const UserModel = (instance, datatype) => {
       lastName: datatype.STRING,
       email: datatype.STRING,
       phone: datatype.STRING,
+      alias: datatype.STRING,
       password: datatype.STRING,
       isAdmin: {
         type: datatype.BOOLEAN,
