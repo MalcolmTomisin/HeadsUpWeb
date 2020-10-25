@@ -1,4 +1,5 @@
 /* eslint-disable no-undef */
+const Twilio = require("twilio");
 
 const staging = process.env.NODE_ENV == "staging" ? true : false;
 let dbName = staging
@@ -7,6 +8,42 @@ let dbName = staging
 let port = staging
 	? process.env.API_PORT_STAGING || 5000
 	: process.env.API_PORT || 5000;
+	
+// Check configuration variables
+if (process.env.TWILIO_API_KEY == null ||
+		process.env.TWILIO_API_SECRET == null ||
+		process.env.TWILIO_ACCOUNT_SID == null ||
+		process.env.VERIFICATION_SERVICE_SID == null ||
+		process.env.COUNTRY_CODE == null) {
+	console.log("Please copy the .env.example file to .env, " +
+										"and then add your Twilio API Key, API Secret, " +
+										"and Account SID to the .env file. " +
+										"Find them on https://www.twilio.com/console");
+	process.exit();
+}
+
+if (process.env.APP_HASH == null) {
+	console.log("Please provide a valid Android app hash, " + "in the .env file");
+	process.exit();
+}
+
+if (process.env.CLIENT_SECRET == null) {
+	console.log(
+		"Please provide a secret string to share, " +
+      "between the app and the server " +
+      "in the .env file"
+	);
+	process.exit();
+}
+
+configuredClientSecret = process.env.CLIENT_SECRET;
+
+// Initialize the Twilio Client
+const twilioClient = new Twilio(process.env.TWILIO_API_KEY,
+	process.env.TWILIO_API_SECRET,
+	{ accountSid: process.env.TWILIO_ACCOUNT_SID });
+	
+const SMSVerify = require("./SMSVerify.js");
 
 module.exports = {
 	api: {
@@ -18,5 +55,14 @@ module.exports = {
 	},
 	jwt: {
 		secret: process.env.JWT_SECRET || "changethistoanenvvariablelateron",
+	},
+	twilio: {
+		configuredClientSecret: process.env.CLIENT_SECRET || "",
+		smsVerify: new SMSVerify(
+			twilioClient,
+			process.env.APP_HASH,
+			process.env.VERIFICATION_SERVICE_SID,
+			process.env.COUNTRY_CODE
+		)
 	},
 };
