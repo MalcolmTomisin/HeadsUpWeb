@@ -7,9 +7,8 @@ const CLIENT_ID = require("../util/keys");
 const config = require("../config");
 const { User } = require("../model");
 const sequelize = require("../config/database");
-require("dotenv").load();
 const jsonBodyParser = require("body-parser").json();
-const Twilio = require("twilio");
+const {smsVerify} = require("../config").twilio;
 
 module.exports = {
 	verifyUser: (req, res, next) => {
@@ -82,8 +81,47 @@ module.exports = {
 			})
 			.catch(next);
 	},
-	verifyPhoneNumber: (req, res, next) => {
+	sendOneTimeCode : (req, res, next) => {
+		const clientSecret = req.body.client_secret;
+		const phone = req.body.phone;
+		
+		if (clientSecret == null || phone == null) {
+			// send an error saying that both client_secret and phone are required
+			res
+				.status(500)
+				.json({ message: "Both client_secret and phone are required." });
+			return;
+		}
 
+		if (config.twilio.configuredClientSecret != clientSecret) {
+			res.status(500).json({message: "The client_secret parameter does not match."});
+			return;
+		}
+
+		smsVerify.request(phone);
+		res.status(200).json({ success: true });
+
+	},
+	verifyOneTimeCode: (req, res, next) => {
+		const clientSecret = req.body.client_secret;
+		const phone = req.body.phone;
+		const smsMessage = req.body.sms_message;
+		
+		if (clientSecret == null || phone == null || smsMessage == null) {
+			res
+				.status(500)
+				.json({
+					message:
+            "The client_secret, phone, and sms_message parameters are required",
+				});
+			return;
+		}
+		if (config.twilio.configuredClientSecret != clientSecret) {
+			res
+				.status(500)
+				.json({ message: "The client_secret parameter does not match." });
+			return;
+		}
 	}
 };
 
