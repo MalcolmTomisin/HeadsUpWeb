@@ -7,9 +7,9 @@ router.get("/", function(req, res) {
 	res.send("respond with a resource");
 });
 
-router.post("/verify", userController.verifyUser);
+router.post("/tokensignin", userController.verifyUser);
 router.post("/otp", userController.sendOneTimeCode);
-router.post("/verifyOtp", userController.verifyOneTimeCode);
+router.post("/verifyotp", userController.verifyOneTimeCode);
 
 
 module.exports = router;
