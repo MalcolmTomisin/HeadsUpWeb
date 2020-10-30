@@ -1,5 +1,15 @@
 /* eslint-disable no-undef */
 const Twilio = require("twilio");
+const redis = require("redis");
+const hazardPublisher = redis.createClient();
+const AWS = require("aws-sdk");
+const { AWS_ID, AWS_SECRET_KEY } = require("../util/keys");
+const S3 = new AWS.S3({
+	accessKeyId: AWS_ID,
+	secretAccessKey: AWS_SECRET_KEY,
+});
+
+
 
 const staging = process.env.NODE_ENV == "staging" ? true : false;
 let dbName = staging
@@ -65,4 +75,7 @@ module.exports = {
 			process.env.COUNTRY_CODE
 		)
 	},
+	hazardPublisher,
+	BUCKET_NAME: "headsupbucket",
+	S3
 };

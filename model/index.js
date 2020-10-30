@@ -1,33 +1,36 @@
 "use strict";
 
-const Sequelize = require("sequelize");
+const {DataTypes} = require("sequelize");
 const sequelize = require("../config/database.js");
 
 const UserModel = (instance, datatype) => {
-	return sequelize.define("user", {
-		id: {
-			type: datatype.INTEGER,
-			primaryKey: true,
-			allowNull: false,
-			autoIncrement: true,
+	return sequelize.define(
+		"user",
+		{
+			id: {
+				type: datatype.INTEGER,
+				primaryKey: true,
+				allowNull: false,
+				autoIncrement: true,
+			},
+			firstName: datatype.STRING,
+			lastName: datatype.STRING,
+			email: datatype.STRING,
+			phone: datatype.STRING,
+			alias: datatype.STRING,
+			isAdmin: {
+				type: datatype.BOOLEAN,
+				defaultValue: false,
+			},
+			picture: datatype.STRING,
 		},
-		firstName: datatype.STRING,
-		lastName: datatype.STRING,
-		email: datatype.STRING,
-		phone: datatype.STRING,
-		alias: datatype.STRING,
-		password: datatype.STRING,
-		isAdmin: {
-			type: datatype.BOOLEAN,
-			defaultValue: false,
-		},
-		picture: datatype.STRING,
-	}, {
-		paranoid: true
-	});
+		{
+			paranoid: true,
+		}
+	);
 };
 
-const User = UserModel(sequelize, Sequelize);
+const User = UserModel(sequelize, DataTypes);
 
 const HazardModel = (instance, datatype) => {
 	return sequelize.define("hazard", {
@@ -38,6 +41,7 @@ const HazardModel = (instance, datatype) => {
 			autoIncrement: true,
 		},
 		location: datatype.GEOMETRY("POINT"),
+		type: datatype.INTEGER,
 		address: datatype.TEXT,
 		city: datatype.STRING,
 		isVerified: {
@@ -56,7 +60,7 @@ const HazardModel = (instance, datatype) => {
 	});
 };
 
-const Hazard = HazardModel(sequelize, Sequelize);
+const Hazard = HazardModel(sequelize, DataTypes);
 
 const ImageModel = (sequelize, datatype) => {
 	return sequelize.define(
@@ -79,18 +83,19 @@ const ImageModel = (sequelize, datatype) => {
 	);
 };
 
-const Image = ImageModel(sequelize, Sequelize);
+const Image = ImageModel(sequelize, DataTypes);
 
 User.hasMany(Hazard);
 Hazard.belongsTo(User);
-Hazard.hasOne(Image);
+Hazard.hasMany(Image);
 Image.belongsTo(Hazard);
 
-sequelize.sync({}).then(() => {
+sequelize.sync({alter: true}).then(() => {
 	console.log("Database & tables created..");
 });
 
 module.exports = {
 	User,
-	Hazard
+	Hazard,
+	Image
 };
