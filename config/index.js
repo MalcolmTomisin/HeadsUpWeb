@@ -2,6 +2,7 @@
 const Twilio = require("twilio");
 const redis = require("redis");
 const hazardPublisher = redis.createClient();
+const hazardSubscriber = redis.createClient();
 const AWS = require("aws-sdk");
 const { AWS_ID, AWS_SECRET_KEY } = require("../util/keys");
 const S3 = new AWS.S3({
@@ -9,6 +10,11 @@ const S3 = new AWS.S3({
 	secretAccessKey: AWS_SECRET_KEY,
 });
 
+
+
+hazardSubscriber.on("error", () => {
+	//deal with error
+});
 
 
 const staging = process.env.NODE_ENV == "staging" ? true : false;
@@ -77,5 +83,6 @@ module.exports = {
 	},
 	hazardPublisher,
 	BUCKET_NAME: "headsupbucket",
-	S3
+	S3,
+	hazardSubscriber
 };

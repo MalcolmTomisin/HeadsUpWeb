@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -8,8 +9,10 @@ const bodyParser = require("body-parser");
 
 var indexRouter = require("./routes/index");
 var usersRoutes = require("./routes/users");
+const config = require("./config/index");
 
 var app = express();
+
 
 app.use(cors());
 // view engine setup
@@ -39,6 +42,12 @@ app.use(function(err, req, res, next) {
 	// render the error page
 	res.status(err.status || 500);
 	res.render("error");
+});
+
+app.listen(config.api.port, () => {
+	console.log(
+		`Server listening on port ${config.api.port} (${new Date().toTimeString()})`
+	);
 });
 
 module.exports = app;

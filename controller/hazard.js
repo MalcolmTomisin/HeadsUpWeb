@@ -1,5 +1,8 @@
 const { Hazard, Image } = require("../model");
-const { hazardPublisher } = require("../config");
+const { hazardPublisher, hazardSubscriber } = require("../config");
+var app = require("express")();
+var http = require("http").createServer(app);
+var io = require("socket.io")(http);
 
 
 
@@ -34,5 +37,18 @@ module.exports = {
 		};
 		hazardPublisher.publish("hazard", JSON.stringify({hazardInfo}));
         
+	},
+	listen: (req, res) => {
+		const { latitude, longitude } = req.query;
+		if (typeof latitude !== "string" || typeof longitude !== "string") {
+			return res.status(400).json({ message: "Invalid location coordinates" });
+		}
+		io.on("connection", socket => {
+			hazardSubscriber.subscribe("hazard");
+			hazardSubscriber.on("message", (channel, message) => {
+				console.log("Recieved data " + message);
+				socket.send(message);
+			});
+		});
 	}
 };
