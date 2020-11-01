@@ -38,7 +38,7 @@ module.exports = {
 		hazardPublisher.publish("hazard", JSON.stringify({hazardInfo}));
         
 	},
-	listen: (req, res) => {
+	listenForHazard: (req, res) => {
 		const { latitude, longitude } = req.query;
 		if (typeof latitude !== "string" || typeof longitude !== "string") {
 			return res.status(400).json({ message: "Invalid location coordinates" });
