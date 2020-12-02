@@ -44,6 +44,7 @@ module.exports = {
 			return res.status(400).json({ message: "Invalid location coordinates" });
 		}
 		io.on("connection", socket => {
+			res.status(200).json({ success: true, message: "connected" });
 			hazardSubscriber.subscribe("hazard");
 			hazardSubscriber.on("message", (channel, message) => {
 				console.log("Recieved data " + message);
